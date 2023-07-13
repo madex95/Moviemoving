@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.Moviemoving.mapper.AdminMapper">
+	<!-- 전체 영화리스트 -->
+	<select id="getList" resultType="com.Moviemoving.domain.MovieVO">
+  	<![CDATA[
+ 	select * from MovieInfo where MovieInfo_no > 0
+ 	]]>
+	</select>
+
+	<!-- 영화상세 -->
+	<select id="read" resultType="com.Moviemoving.domain.MovieVO">
+		select * from MovieInfo where
+		MovieInfo_no = #{MovieInfo_no}
+	</select>
+
+	<!-- admin 등록 -->
+	<insert id="insertSelectKey">
+		insert into MovieInfo(MovieInfo_code,MovieInfo_no,MovieInfo_title,MovieInfo_year,MovieInfo_age,MovieInfo_rt,MovieInfo_visit,MovieInfo_con,MovieInfo_Thum,MovieInfo_bkimg,MovieInfo_video,MovieInfo_watcha,MovieInfo_wavve,MovieInfo_netflix,MovieInfo_category)
+		values(#{MovieInfo_code},#{MovieInfo_no},#{MovieInfo_title},#{MovieInfo_year},#{MovieInfo_age},#{MovieInfo_rt},#{MovieInfo_visit},#{MovieInfo_con},#{MovieInfo_Thum},#{MovieInfo_bkimg},#{MovieInfo_video},#{MovieInfo_watcha},#{MovieInfo_wavve},#{MovieInfo_netflix},#{MovieInfo_category})
+	</insert>
+	
+	<update id="update">
+		update MovieInfo
+		set MovieInfo_code=#{MovieInfo_code},
+		MovieInfo_title=#{MovieInfo_title},
+		MovieInfo_year=#{MovieInfo_year},
+		MovieInfo_age=#{MovieInfo_age},
+		MovieInfo_rt=#{MovieInfo_rt},
+		MovieInfo_visit=#{MovieInfo_visit},
+		MovieInfo_con=#{MovieInfo_con},
+		MovieInfo_thum=#{MovieInfo_thum},
+		MovieInfo_bkimg=#{MovieInfo_bkimg},
+		MovieInfo_video=#{MovieInfo_video},
+		MovieInfo_watcha=#{MovieInfo_watcha},
+		MovieInfo_wavve=#{MovieInfo_wavve},
+		MovieInfo_netflix=#{MovieInfo_netflix},
+		MovieInfo_category=#{MovieInfo_category}
+		where MovieInfo_no = #{MovieInfo_no}
+	</update>
+	
+	<delete id="delete">
+		delete MovieInfo where MovieInfo_no = #{MovieInfo_no}
+	</delete>
+	
+	
+	<select id="getUserList" resultType = "com.Moviemoving.domain.UserVO">
+		select * from Usertbl
+	</select>
+	
+	<delete id="delete_user">
+		delete from Usertbl where user_id = #{user_id}
+	</delete>
+	
+	<delete id="delete_auth">
+		delete from authorities where user_id = #{user_id}
+	</delete>
+	
+	<update id="update_user">
+		update Usertbl
+		set user_name = #{user_name}
+		where user_id = #{user_id}
+	</update>
+</mapper>

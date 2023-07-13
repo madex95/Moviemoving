@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.Moviemoving.mapper.MypageMapper">
+	<!-- BookMark -->
+	<select id="movie_bookmark"	resultType="com.Moviemoving.domain.MovieVO">
+		SELECT
+		movie.MovieInfo_Thum, movie.MovieInfo_title,
+		movie.MovieInfo_no
+		FROM
+		Bookmark bk LEFT OUTER JOIN MovieInfo movie on
+		movie.MovieInfo_no =
+		bk.MovieInfo_no where MovieInfo_code = '0' and
+		User_id = #{User_id}
+	</select>
+	<select id="tv_bookmark" resultType="com.Moviemoving.domain.MovieVO">
+		SELECT
+		movie.MovieInfo_Thum, movie.MovieInfo_title,
+		movie.MovieInfo_no
+		FROM
+		Bookmark bk LEFT OUTER JOIN MovieInfo movie on
+		movie.MovieInfo_no =
+		bk.MovieInfo_no where MovieInfo_code = '1' and
+		User_id = #{User_id}
+	</select>
+
+	<!-- 북마크 등록 -->
+	<insert id="insertBookmark">
+		insert into Bookmark(User_id, MovieInfo_no) VALUES
+		(#{User_id}, #{MovieInfo_no})
+	</insert>
+	<!-- 북마크 삭제 -->
+	<delete id="deleteBookmark">
+		delete Bookmark where user_id = #{User_id} and
+		MovieInfo_no = #{MovieInfo_no}
+	</delete>
+	<!-- 북마크 중복체크 -->
+	<select id="bookmarkChk" resultType="int">
+		select count(*) from
+		Bookmark where User_id = #{User_id} and MovieInfo_no = #{MovieInfo_no}
+	</select>
+	
+	
+	<!-- 마이페이지 후기리스트(영화) -->
+	<select id="rateListMovie" resultType="com.Moviemoving.domain.RateVO">
+		SELECT
+		movie.MovieInfo_Thum, movie.MovieInfo_title,
+		movie.MovieInfo_no, mr.MovieRate_con, mr.MovieRate_score
+		FROM
+		MovieRate mr LEFT OUTER JOIN MovieInfo movie on
+		movie.MovieInfo_no =
+		mr.MovieInfo_no where MovieInfo_code = '0' and
+		User_id = #{User_id}
+	</select>
+	<!-- 마이페이지 후기리스트(TV) -->
+	<select id="rateListTV" resultType="com.Moviemoving.domain.RateVO">
+		SELECT
+		movie.MovieInfo_Thum, movie.MovieInfo_title,
+		movie.MovieInfo_no, mr.MovieRate_con, mr.MovieRate_score
+		FROM
+		MovieRate mr LEFT OUTER JOIN MovieInfo movie on
+		movie.MovieInfo_no =
+		mr.MovieInfo_no where MovieInfo_code = '1' and
+		User_id = #{User_id}
+	</select>
+	
+	<!-- 후기수정 -->
+	<update id="modifyRate">
+		update MovieRate
+		set MovieRate_con= #{MovieRate_con},
+		MovieRate_score=#{MovieRate_score}
+		where User_id = #{User_id} and MovieInfo_no = #{MovieInfo_no}
+	</update>
+	
+	<!-- 후기삭제 -->
+	<delete id="deleteRate">
+		delete MovieRate where User_id = #{User_id} and MovieInfo_no = #{MovieInfo_no}
+	</delete>
+</mapper>

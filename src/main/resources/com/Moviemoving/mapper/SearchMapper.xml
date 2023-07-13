@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Moviemoving.mapper.SearchMapper">
+
+	<select id="getList" resultType="com.Moviemoving.domain.MovieVO">
+		<![CDATA[
+			select * from MovieInfo where MovieInfo_no > 0
+		]]>
+	</select>
+
+	<!-- 리스트목록(페이징) -->
+	<select id="getListWithPaging" resultType="com.Moviemoving.domain.MovieVO">
+		<![CDATA[
+				select distinct
+				MovieInfo_no, MovieInfo_title, MovieInfo_thum 
+			from	
+					(
+						select /* +INDEX_DESC(MovieInfo SYS_c008183) */ distinct
+						rownum as rn, movie.MovieInfo_no, movie.MovieInfo_title, movie.MovieInfo_thum
+						from 
+							MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no
+						where	rownum <= #{pageNum} * #{amount}
+						
+					
+		]]>
+
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}|| '%'
+		</if>
+		<if test='keyword2 == "m"'>
+			and movie.movieInfo_code = 0
+		</if>
+		<if test='keyword2 == "t"'>
+			and movie.movieInfo_code = 1
+		</if>
+
+		<if test='genre == "act"'>
+			and cate.categoryList_no= 0
+		</if>
+
+		<if test='genre == "ani"'>
+			and cate.categoryList_no= 1
+		</if>
+
+		<if test='genre == "comedy"'>
+			and cate.categoryList_no= 2
+		</if>
+
+		<if test='genre == "crime"'>
+			and cate.categoryList_no= 3
+		</if>
+
+		<if test='genre == "docu"'>
+			and cate.categoryList_no= 4
+		</if>
+
+		<if test='genre == "drama"'>
+			and cate.categoryList_no= 5
+		</if>
+
+		<if test='genre == "family"'>
+			and cate.categoryList_no= 6
+		</if>
+
+		<if test='genre == "fantasy"'>
+			and cate.categoryList_no= 7
+		</if>
+
+		<if test='genre == "horror"'>
+			and cate.categoryList_no= 8
+		</if>
+
+		<if test='genre == "history"'>
+			and cate.categoryList_no= 9
+		</if>
+
+		<if test='genre == "music"'>
+			and cate.categoryList_no= 10
+		</if>
+
+		<if test='genre == "romance"'>
+			and cate.categoryList_no= 11
+		</if>
+
+		<if test='genre == "SF"'>
+			and cate.categoryList_no= 12
+		</if>
+
+		<if test='genre == "sports"'>
+			and cate.categoryList_no= 13
+		</if>
+
+		<if test='genre == "thrill"'>
+			and cate.categoryList_no= 14
+		</if>
+
+		<if test='genre == "war"'>
+			and cate.categoryList_no= 15
+		</if>
+
+		<![CDATA[
+						)
+				where rn > (#{pageNum} -1) * #{amount}
+				
+			]]>
+
+	</select>
+	<!-- /리스트 목록(페이징) -->
+
+	<!-- 영화 상세 -->
+	<select id="read" resultType="com.Moviemoving.domain.MovieVO">
+		select * from MovieInfo where
+		MovieInfo_no = #{MovieInfo_no}
+	</select>
+
+	<!-- 카테고리 -->
+	<select id="getCategory"
+		resultType="com.Moviemoving.domain.CategoryListVO">
+		select cateList.CategoryList_name
+		from MovieInfo movie right
+		join Category cate
+		on movie.MovieInfo_no = cate.movieinfo_no
+		right join
+		CategoryList cateList on catelist.categorylist_no =
+		cate.categorylist_no
+		where movie.MovieInfo_no = #{MovieInfo_no}
+	</select>
+
+
+	<!-- 리스트 총 갯수 -->
+	<select id="getTotal" resultType="int">
+		select count(*) from movieInfo
+		<if test="keyword != null">
+			where movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+	<!-- /리스트 총 갯수 -->
+	<!-- 리스트 영화 갯수 -->
+	<select id="getTotalM" resultType="int">
+		select count(*) from movieInfo where movieInfo_code = 0
+		<if test="keyword != null">
+			and movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+	<!--  리스트 TV 갯수 -->
+	<select id="getTotalT" resultType="int">
+		select count(*) from movieInfo where movieInfo_code = 1
+		<if test="keyword != null">
+			and movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+	
+	<!-- 장르갯수 -->
+	<!-- 액션-->
+	<select id="getTotalact" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 0
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- 애니메이션 -->
+		<select id="getTotalani" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 1
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- 코미디 -->
+		<select id="getTotalcomedy" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 2
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- 범죄-->
+		<select id="getTotalcrime" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 3
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- 다큐멘터리-->
+		<select id="getTotaldocu" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 4
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+	<!-- 드라마 -->
+		<select id="getTotaldrama" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 5
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- 가족-->
+		<select id="getTotalfamily" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 6
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- 판타지-->
+		<select id="getTotalfantasy" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 7
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- 공포-->
+		<select id="getTotalhorror" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 8
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- 역사-->
+		<select id="getTotalhistory" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 9
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- 음악-->
+		<select id="getTotalmusic" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 10
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- 로맨스-->
+		<select id="getTotalromance" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 11
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- SF-->
+		<select id="getTotalSF" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 12
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- 스포츠-->
+		<select id="getTotalsports" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 13
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- 스릴-->
+		<select id="getTotalthrill" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 14
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+		<!-- 전쟁-->
+		<select id="getTotalwar" resultType="int">
+		select count(*) from MovieInfo movie  left outer join Category cate on movie.MovieInfo_no = cate.MovieInfo_no where cate.categoryList_no= 15
+		<if test="keyword != null">
+			and movie.movieInfo_title like '%'||#{keyword}||'%'
+		</if>
+	</select>
+	<!-- /장르 갯수 -->
+</mapper>

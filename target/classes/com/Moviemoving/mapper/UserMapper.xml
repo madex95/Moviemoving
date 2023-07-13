@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.Moviemoving.mapper.UserMapper">
+	<insert id="insertUser" parameterType="string">
+		insert into usertbl(user_id, user_pw, user_name) values(#{user_id},#{user_pw},#{user_name})
+	</insert>
+	
+	<!-- 권한추가 -->
+	<insert id="insertAuth">
+		insert into authorities(user_id, authorities_auth) values (#{user_id},#{authorities_auth})
+	</insert>
+	
+	
+  <resultMap type="com.Moviemoving.domain.UserVO" id="userMap">
+    <id property="user_id" column="user_id"/>
+    <result property="user_id" column="user_id"/>
+    <result property="user_pw" column="user_pw"/>
+    <result property="user_name" column="user_name"/>
+    <collection property="authList" resultMap="authMap">
+    </collection> 
+  </resultMap>
+  
+  <resultMap type="com.Moviemoving.domain.AuthVO" id="authMap">
+    <result property="authorities_auth" column="authorities_auth"/>
+    <result property="user_id" column="user_id"/>
+  </resultMap>
+  
+  <!-- 데이터읽기 -->
+  <select id="read" resultMap="userMap">
+		SELECT 
+		  u.user_id,  u.user_pw, u.user_name, a.authorities_auth
+		FROM 
+		  usertbl u LEFT OUTER JOIN authorities a on u.user_id = a.user_id 
+		WHERE u.user_id = #{user_id} 
+  </select>
+  
+  	<!-- 회원 탈퇴 계정 -->
+	<delete id="delete">
+		DELETE FROM  usertbl
+		WHERE user_id = #{user_id}
+	</delete>
+	
+	  	<!-- 회원 탈퇴 권한-->
+	<delete id="deleteAuth">
+		DELETE FROM  authorities
+		WHERE user_id = #{user_id}
+	</delete>
+	
+	   <!-- 비밀번호 수정  -->
+   <update id="modifyPw">
+      UPDATE usertbl
+      SET user_pw = #{user_pw}
+      WHERE user_id = #{user_id}
+   </update>
+	
+</mapper>

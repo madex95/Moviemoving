@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security 
+		http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<bean id="bcryptPasswordEncoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
+	<bean id="customUserDetailsService"
+		class="com.Moviemoving.security.CustomUserDetailsService"></bean>
+
+	<security:http auto-config="true" use-expressions="true">
+		<security:intercept-url pattern="/mypage"
+			access="hasAnyRole('ROLE_MEMBER','ROLE_ADMIN')" />
+<!-- default-target-url="/mypage" -->
+		<security:form-login login-page="/"
+			username-parameter="user_id"
+			password-parameter="user_pw"
+			authentication-failure-url="/?login_error=1" />
+
+		<security:logout logout-url="/logout"
+			logout-success-url="/" invalidate-session="true"
+			delete-cookies="JSESSIONID,remember-me" />
+
+		<security:remember-me
+			data-source-ref="dataSource" token-validity-seconds="1209600" />
+
+	</security:http>
+
+	<security:authentication-manager>
+
+		<security:authentication-provider
+			user-service-ref="customUserDetailsService">
+
+			<security:password-encoder
+				ref="bcryptPasswordEncoder" />
+
+		</security:authentication-provider>
+
+	</security:authentication-manager>
+
+
+
+
+
+</beans>

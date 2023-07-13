@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.Moviemoving.mapper.MovieMapper">
+	<!-- 영화상세 -->
+	<select id="read" resultType="com.Moviemoving.domain.MovieVO">
+		select * from MovieInfo where
+		MovieInfo_no = #{MovieInfo_no}
+	</select>
+
+	<!-- 영화메인-전체 -->
+	<select id="movieBest" resultType="com.Moviemoving.domain.MovieVO">
+	  <![CDATA[
+	  select * from MovieInfo where MovieInfo_code = '0' and rownum <= 8 and (MovieInfo_watcha is not null or MovieInfo_wavve is not null or MovieInfo_netflix is not null)
+	  order by MovieInfo_grade desc, MovieInfo_year desc
+	  ]]>
+	</select>
+
+	<!-- 영화메인-넷플릭스 인기5 -->
+	<select id="movieNetflix"
+		resultType="com.Moviemoving.domain.MovieVO">
+   <![CDATA[
+  	select * from MovieInfo where MovieInfo_code = '0' and MovieInfo_netflix is not null and rownum <= 5 order by MovieInfo_grade desc, MovieInfo_year desc
+  	]]>
+	</select>
+
+	<!-- 영화메인-왓챠 인기5 -->
+	<select id="movieWatcha"
+		resultType="com.Moviemoving.domain.MovieVO">
+   <![CDATA[
+  	select * from MovieInfo where MovieInfo_code = '0' and MovieInfo_watcha is not null and rownum <= 5 order by MovieInfo_grade desc, MovieInfo_year desc
+  	]]>
+	</select>
+
+	<!-- 영화메인-웨이브 인기5 -->
+	<select id="movieWavve"
+		resultType="com.Moviemoving.domain.MovieVO">
+   <![CDATA[
+  	select * from MovieInfo where MovieInfo_code = '0' and MovieInfo_wavve is not null and rownum <= 5 order by MovieInfo_grade desc, MovieInfo_year desc
+  	]]>
+	</select>
+
+	<!-- 카테고리 -->
+	<select id="getCategory"
+		resultType="com.Moviemoving.domain.CategoryListVO">
+		select cateList.CategoryList_name
+		from MovieInfo movie right
+		join Category cate
+		on movie.MovieInfo_no = cate.movieinfo_no
+		right join
+		CategoryList cateList on catelist.categorylist_no =
+		cate.categorylist_no
+		where movie.MovieInfo_no = #{MovieInfo_no}
+	</select>
+
+
+	<!-- tv메인-전체 -->
+	<select id="tvBest" resultType="com.Moviemoving.domain.MovieVO">
+  <![CDATA[
+  select * from MovieInfo where MovieInfo_code = '1' and rownum <= 8 and (MovieInfo_watcha is not null or MovieInfo_wavve is not null or MovieInfo_netflix is not null)
+  order by MovieInfo_grade desc, MovieInfo_year desc
+  ]]>
+	</select>
+
+	<!-- tv메인-넷플릭스 인기5 -->
+	<select id="tvNetflix"
+		resultType="com.Moviemoving.domain.MovieVO">
+   <![CDATA[
+  	select * from MovieInfo where MovieInfo_code = '1' and MovieInfo_netflix is not null and rownum <= 5 order by MovieInfo_grade desc, MovieInfo_year desc
+  	]]>
+	</select>
+
+	<!-- tv메인-왓챠 인기5 -->
+	<select id="tvWatcha"
+		resultType="com.Moviemoving.domain.MovieVO">
+   <![CDATA[
+  	select * from MovieInfo where MovieInfo_code = '1' and MovieInfo_watcha is not null and rownum <= 5 order by MovieInfo_grade desc, MovieInfo_year desc
+  	]]>
+	</select>
+
+	<!-- tv메인-웨이브 인기5 -->
+	<select id="tvWavve" resultType="com.Moviemoving.domain.MovieVO">
+   <![CDATA[
+  	select * from MovieInfo where MovieInfo_code = '1' and MovieInfo_wavve is not null and rownum <= 5 order by MovieInfo_grade desc, MovieInfo_year desc
+  	]]>
+	</select>
+	
+	<!-- 후기등록 -->
+	<insert id="insertRate">
+		insert into MovieRate(MovieInfo_no, User_id,
+		MovieRate_con, MovieRate_score) values
+		(#{MovieInfo_no},#{User_id},#{MovieRate_con},#{MovieRate_score})
+	</insert>
+	
+	<!-- 후기 리스트 -->
+	<select id="rateList" resultType="com.Moviemoving.domain.RateVO">
+		select mr.MovieRate_con, mr.MovieRate_score, mr.User_id, usertbl.User_name from MovieRate mr LEFT OUTER JOIN UserTBL on 
+		usertbl.user_id = mr.user_id where MovieInfo_no = #{MovieInfo_no} order by mr.movierate_date
+	</select>
+	
+	<!-- 후기 중복체크 -->
+	<select id="rateChk" resultType="int">
+		select count(*) from
+		MovieRate where User_id = #{User_id} and MovieInfo_no = #{MovieInfo_no}
+	</select>
+	
+	<!-- 후기참여한 인원수 -->
+	<select id="rateCount" resultType="int">
+		select count(*) from MovieRate where MovieInfo_no = #{MovieInfo_no}
+	</select>
+	
+	<!-- 후기평점 -->
+	<select id="rateGPA" resultType="int">
+		select trunc (sum(MovieRate_score) / count(*),1) from MovieRate where MovieInfo_no = #{MovieInfo_no}
+	</select>
+	
+	
+	<!-- 관리자 -->
+	<select id="getList" resultType="com.Moviemoving.domain.MovieVO">
+  	<![CDATA[
+ 		select * from MovieInfo where MovieInfo_no > 0 and rownum <= 20 order by MovieInfo_no desc
+ 	]]>
+	</select>
+	<select id="getView" resultType="com.Moviemoving.domain.MovieVO">
+		select * from MovieInfo where MovieInfo_no = #{MovieInfo_no}
+	</select>
+	<delete id="deleteMovie">
+		delete MovieInfo where MovieInfo_no = #{MovieInfo_no}
+	</delete>
+</mapper>
